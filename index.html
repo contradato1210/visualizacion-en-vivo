@@ -1,0 +1,1265 @@
+<!doctype html>
+<!--
+  LA AGUAFIESTAS · Contradatos
+  1080 x 1920 · dos modos:
+    COACH      -> exige sonreír para validar el SÍ (felicidad como mandato)
+    AGUAFIESTAS-> mismas mecánicas, sin exigencia de cara (mirada feminista decolonial)
+  Paleta: rosa #f5dadf · negro · blanco · amarillo #fcd757
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aguafiestas">
+<meta name="theme-color" content="#f5dadf">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>La Aguafiestas</title>
+<style>
+  :root{
+    --paper:#f5dadf;   /* fondo */
+    --ink:#000000;     /* letras */
+    --white:#ffffff;   /* respiros y acentos */
+    --yellow:#fcd757;  /* resaltador y acento sobre negro */
+    --night:#000000;   /* pantallas invertidas */
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --disp:'Big Shoulders Display','Arial Narrow',sans-serif;
+  }
+  *{box-sizing:border-box;border-radius:0 !important}
+  html,body{margin:0;height:100%;background:var(--paper);overflow:hidden;font-family:var(--mono);
+    -webkit-tap-highlight-color:transparent;user-select:none}
+
+  #app{position:absolute;left:50%;top:50%;width:1080px;height:1920px;
+    transform-origin:50% 50%;background:var(--paper);overflow:hidden}
+
+  /* ---- video en duotono rosa ---- */
+  #cam,#fx{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  #cam{filter:grayscale(1) contrast(1.10) brightness(1.16)}
+  #duoM{position:absolute;inset:0;background:var(--paper);mix-blend-mode:multiply;opacity:1;z-index:1;pointer-events:none}
+  #duoS{position:absolute;inset:0;background:var(--paper);mix-blend-mode:screen;opacity:.26;z-index:1;pointer-events:none}
+  #fx{z-index:2;pointer-events:none}
+  #scan{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.14;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 2px,transparent 2px 5px)}
+  #grain{position:absolute;inset:-40%;z-index:3;pointer-events:none;opacity:.14;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+    animation:gr .2s steps(2) infinite}
+  @keyframes gr{0%{transform:translate(0,0)}100%{transform:translate(5%,3%)}}
+
+  /* ---- coro vertical del afiche ---- */
+  #choir{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.55}
+  #choir span{position:absolute;writing-mode:vertical-rl;font-size:15px;letter-spacing:1.6px;
+    color:var(--ink);white-space:nowrap;font-weight:500}
+
+  .crop{position:absolute;z-index:6;width:44px;height:44px;pointer-events:none;border:0 solid var(--ink)}
+  .crop.tl{top:96px;left:24px;border-top-width:2px;border-left-width:2px}
+  .crop.tr{top:96px;right:24px;border-top-width:2px;border-right-width:2px}
+  .crop.bl{bottom:250px;left:24px;border-bottom-width:2px;border-left-width:2px}
+  .crop.br{bottom:250px;right:24px;border-bottom-width:2px;border-right-width:2px}
+
+  /* ---- cinta superior ---- */
+  #topstrip{position:absolute;top:0;left:0;right:0;height:76px;z-index:7;background:var(--paper);
+    border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;
+    padding:0 30px;font-size:14px;letter-spacing:2.2px;text-transform:uppercase;color:var(--ink)}
+  #topstrip .l{font-weight:700}
+  #topstrip .l em{font-style:normal;font-weight:700;background:var(--yellow);padding:2px 6px}
+  #topstrip .r{display:flex;align-items:center;gap:20px;color:var(--ink)}
+  #tPeople{cursor:pointer;pointer-events:auto}
+  .rec{display:inline-block;width:11px;height:11px;background:var(--ink);margin-right:8px;
+    animation:blink 1.1s steps(1) infinite;vertical-align:-1px}
+  @keyframes blink{50%{opacity:.12}}
+  #prog{position:absolute;top:76px;left:0;right:0;height:10px;z-index:7;display:flex;gap:3px;background:var(--paper)}
+  #prog i{flex:1;background:rgba(0,0,0,.18);display:block}
+  #prog i.done{background:var(--ink)}
+  #prog i.now{background:var(--white)}
+
+  /* ---- losa de la pregunta ---- */
+  #slab{position:absolute;top:86px;left:0;right:0;z-index:6;background:var(--paper);color:var(--ink);
+    padding:22px 40px 28px;display:none;border-bottom:4px solid var(--ink);
+    box-shadow:0 22px 0 rgba(0,0,0,.16)}
+  #slab.on{display:block}
+  #slabhead{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:3px solid var(--ink);padding-bottom:11px;margin-bottom:24px;
+    font-size:15px;letter-spacing:3px;text-transform:uppercase;font-weight:700;color:var(--ink)}
+  #qtext{font-family:var(--disp);font-weight:900;font-size:64px;line-height:.94;
+    text-transform:uppercase;letter-spacing:-1px}
+  #coach{margin-top:18px;font-size:20px;letter-spacing:1.3px;line-height:1.35;font-weight:600;
+    border-left:8px solid var(--ink);padding-left:15px;color:var(--ink)}
+
+  /* ---- pantalla de lectura: la pregunta sola ---- */
+  #askq{position:absolute;inset:0;z-index:9;background:rgba(245,218,223,.84);color:var(--ink);
+    display:none;flex-direction:column;padding:104px 60px 280px}
+  #askq.on{display:flex}
+  #askq .head{display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:5px solid var(--ink);padding-bottom:18px;
+    font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:700}
+  #askq .count{font-family:var(--disp);font-weight:900;font-size:120px;line-height:.8;letter-spacing:-2px}
+  #askq .count small{font-size:46px;opacity:.4}
+  #askq .body{flex:1;display:flex;align-items:center;padding:30px 0}
+  #aqText{font-family:var(--disp);font-weight:900;font-size:150px;line-height:.9;
+    text-transform:uppercase;letter-spacing:-2px;
+    text-shadow:0 0 22px rgba(245,218,223,.95), 0 0 60px rgba(245,218,223,.9)}
+  #askq .foot{border-top:5px solid var(--ink);padding-top:22px}
+  #askq .foot .call{font-family:var(--disp);font-weight:900;font-size:56px;line-height:.98;
+    text-transform:uppercase;margin-bottom:16px}
+  #askq .foot .bar{height:26px;border:3px solid var(--ink);padding:4px}
+  #askq .foot .bar i{display:block;height:100%;width:0%;background:var(--ink)}
+  #askq .foot .hint{margin-top:14px;font-size:19px;letter-spacing:3px;text-transform:uppercase;opacity:.6}
+
+  /* ---- mitades ---- */
+  #split{position:absolute;top:470px;bottom:250px;left:0;right:0;z-index:5;display:none}
+  #split.on{display:block}
+  #midline{position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(0,0,0,.4);transform:translateX(-1px)}
+  #midline::before,#midline::after{content:"";position:absolute;left:-13px;width:28px;height:2px;background:var(--ink)}
+  #midline::before{top:20%} #midline::after{bottom:20%}
+  .half{position:absolute;top:0;bottom:0;width:50%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:32px;overflow:hidden;transition:background .12s}
+  #hSi{left:0} #hNo{right:0}
+  .half .big{font-family:var(--disp);font-weight:900;font-size:250px;line-height:.8;letter-spacing:2px;
+    color:transparent;-webkit-text-stroke:4px var(--ink);transition:color .12s}
+  .half.active .big{color:var(--ink)}
+  .half.active{background:rgba(0,0,0,.05)}
+  .half .sub{font-size:18px;letter-spacing:4px;text-transform:uppercase;color:rgba(0,0,0,.55);
+    text-align:center;line-height:1.5;max-width:17ch}
+  .half.active .sub{color:var(--ink)}
+  /* el lado donde te ubicas crece y se rellena de amarillo translúcido de abajo
+     hacia arriba; el screen deja ver la cara mientras sube */
+  .half .fill{position:absolute;left:0;right:0;bottom:0;height:0%;background:var(--yellow);
+    opacity:.45;mix-blend-mode:screen;pointer-events:none;transition:height .05s linear}
+  .half .big,.half .sub{position:relative;z-index:2}
+  .half.blocked .big{color:transparent;-webkit-text-stroke:4px var(--ink)}
+  .half.blocked .sub{color:var(--ink)}
+
+  /* modo aguafiestas: el blanco como acento */
+  body.kj .half.active{background:rgba(255,255,255,.55)}
+  body.kj #slabhead{border-bottom-color:var(--ink)}
+
+  /* ---- orden gigante ---- */
+  #order{position:absolute;left:0;right:0;bottom:370px;z-index:8;text-align:center;pointer-events:none;
+    opacity:0;transition:opacity .16s}
+  #order.on{opacity:1}
+  #order b{display:inline-block;font-family:var(--disp);font-weight:900;font-size:148px;line-height:.86;
+    text-transform:uppercase;color:var(--ink);letter-spacing:-1px;
+    text-shadow:8px 8px 0 var(--white)}
+  #order small{display:block;margin-top:18px;font-family:var(--mono);font-size:24px;font-weight:700;
+    letter-spacing:3px;text-transform:uppercase;color:var(--paper);background:var(--ink);
+    padding:11px 20px;box-shadow:7px 7px 0 var(--white)}
+  #order.bad b{color:var(--ink);text-shadow:8px 8px 0 var(--yellow)}
+  #order.bad small{background:var(--yellow);color:var(--ink);box-shadow:7px 7px 0 var(--ink)}
+
+  /* ---- telemetría ---- */
+  #telem{position:absolute;left:0;right:0;bottom:250px;height:54px;z-index:7;background:var(--paper);
+    border-top:2px solid var(--ink);display:flex;align-items:center;gap:26px;padding:0 30px;
+    font-size:14px;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.62)}
+  #telem b{color:var(--ink);font-weight:700}
+  #telem .bar{flex:1;height:12px;border:1px solid rgba(0,0,0,.45)}
+  #telem .bar i{display:block;height:100%;width:0%;background:var(--ink)}
+
+  /* ---- botones ---- */
+  #bar{position:absolute;left:0;right:0;bottom:0;height:250px;z-index:12;background:var(--paper);
+    border-top:2px solid var(--ink);display:flex;gap:2px;
+    padding:24px 22px calc(24px + env(safe-area-inset-bottom))}
+  .btn{flex:1;border:2px solid var(--ink);background:transparent;color:var(--ink);font-family:var(--mono);
+    font-weight:700;font-size:18px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:0 6px}
+  .btn:active{background:var(--ink);color:var(--paper)}
+  .btn.hot{background:var(--yellow)}
+  .btn.hot:active{background:var(--ink);color:var(--yellow)}
+
+  /* ---- pantallas ---- */
+  .screen{position:absolute;inset:0;z-index:10;display:none;flex-direction:column;justify-content:center;
+    padding:120px 64px 290px;background:var(--paper);color:var(--ink);overflow:auto}
+  .screen.on{display:flex}
+  .screen h2{font-family:var(--disp);font-weight:900;font-size:96px;line-height:.88;text-transform:uppercase;
+    margin:0 0 32px;letter-spacing:-1px}
+  .screen p{font-size:25px;line-height:1.55;margin:0 0 22px}
+  .screen .dim{color:rgba(0,0,0,.6)}
+  .screen .btn{flex:none;padding:26px 36px;margin-top:18px}
+
+  #intro .eyebrow{font-size:19px;letter-spacing:8px;text-transform:uppercase;margin-bottom:24px}
+  #intro .title{font-family:var(--disp);font-weight:900;font-size:200px;line-height:.8;text-transform:uppercase;
+    letter-spacing:-4px;margin-bottom:34px;color:var(--ink)}
+  #intro .title span{background:var(--yellow);padding:0 14px;box-decoration-break:clone;
+    -webkit-box-decoration-break:clone}
+  #intro .rule{height:4px;background:var(--ink);margin:0 0 30px}
+  #intro ol{margin:0 0 26px;padding-left:32px;font-size:25px;line-height:1.6}
+  #intro li{margin-bottom:10px}
+
+  /* resultado: pantalla negra */
+  #result{justify-content:flex-start;padding-top:130px;background:var(--night);color:var(--paper)}
+  #result .num{font-family:var(--disp);font-weight:900;font-size:290px;line-height:.76;letter-spacing:-6px;
+    color:var(--yellow)}
+  #result .over{font-size:30px;letter-spacing:5px;text-transform:uppercase;color:rgba(245,218,223,.7);margin:6px 0 30px}
+  #result .verdict{font-family:var(--disp);font-weight:900;font-size:76px;line-height:.94;
+    text-transform:uppercase;margin-bottom:26px;color:var(--white)}
+  #result .cmp{font-size:24px;line-height:1.5;border-left:8px solid var(--yellow);padding-left:18px;color:var(--yellow)}
+
+  /* ideología: pantalla negra */
+  #ideo{background:var(--night);color:var(--paper);padding-top:100px;justify-content:flex-start}
+  #ideo h2{color:var(--paper)}
+  #ideo .stamp{display:inline-block;border:4px solid var(--yellow);color:var(--ink);font-weight:700;
+    font-size:23px;letter-spacing:5px;text-transform:uppercase;padding:13px 19px;margin-bottom:32px;
+    transform:rotate(-3deg);background:var(--yellow)}
+  #ideo .lead{font-size:30px;line-height:1.4;font-weight:600;margin-bottom:42px;
+    border-bottom:4px solid var(--paper);padding-bottom:24px;color:var(--white)}
+  .rev{margin-bottom:42px;padding-left:24px;border-left:6px solid var(--yellow)}
+  .rev .q{font-family:var(--disp);font-weight:900;font-size:52px;line-height:.96;text-transform:uppercase;
+    margin-bottom:10px;color:var(--paper)}
+  .rev .a{font-size:18px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:12px;
+    background:var(--yellow);color:var(--ink);display:inline-block;padding:5px 10px}
+  .rev .r{font-size:24px;line-height:1.5;color:var(--white)}
+  #ideo .close{border:4px solid var(--paper);padding:34px;margin-top:8px}
+  #ideo .close .k{font-family:var(--disp);font-weight:900;font-size:82px;line-height:.86;
+    text-transform:uppercase;margin-bottom:24px;color:var(--yellow)}
+  #ideo .close p{font-size:24px;line-height:1.5;color:var(--white)}
+  #ideo .src{font-size:18px;color:rgba(245,218,223,.7);border-top:2px solid var(--paper);padding-top:16px}
+
+  /* datos */
+  #data{padding-top:100px;justify-content:flex-start}
+  .kpis{display:flex;gap:2px;margin-bottom:48px}
+  .kpi{flex:1;border:2px solid var(--ink);padding:20px 12px}
+  .kpi b{display:block;font-family:var(--disp);font-weight:900;font-size:80px;line-height:.86;color:var(--ink)}
+  .kpi span{display:block;margin-top:8px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,.6)}
+  .sect{font-size:18px;letter-spacing:5px;text-transform:uppercase;color:var(--ink);margin:0 0 20px;
+    border-bottom:2px solid var(--ink);padding-bottom:9px}
+  .sub2{font-size:20px;line-height:1.45;color:rgba(0,0,0,.65);margin:0 0 24px}
+  .rank{border:3px solid var(--ink);padding:22px 22px 20px;margin-bottom:16px}
+  .rank.you{background:var(--yellow)}
+  .rank .rt{font-family:var(--disp);font-weight:900;font-size:42px;line-height:.94;
+    text-transform:uppercase;margin-bottom:8px}
+  .rank .rc{font-size:18px;letter-spacing:1.5px;text-transform:uppercase;
+    color:rgba(0,0,0,.6);margin-bottom:16px}
+  .rank .track{height:44px;border:2px solid var(--ink);position:relative;background:var(--white)}
+  .rank .track i{display:block;height:100%;background:var(--ink)}
+  .rank .track b{position:absolute;right:12px;top:0;line-height:40px;font-family:var(--disp);
+    font-weight:900;font-size:30px;color:var(--ink);mix-blend-mode:difference;filter:invert(1)}
+  .rank .you-tag{margin-top:14px;display:inline-block;background:var(--ink);color:var(--yellow);
+    font-weight:700;font-size:18px;letter-spacing:3px;text-transform:uppercase;padding:9px 14px}
+  .qcard{border:2px solid var(--ink);padding:24px 22px;margin-bottom:20px}
+  .qcard .qq{font-family:var(--disp);font-weight:900;font-size:44px;line-height:.96;
+    text-transform:uppercase;margin-bottom:14px}
+  .qcard .qn{font-size:19px;color:rgba(0,0,0,.72);margin-bottom:0}
+  .qcard .track{height:26px;border:2px solid var(--ink);margin-bottom:14px;background:var(--white)}
+  .qcard .track i{display:block;height:100%;background:var(--ink)}
+  #dataNote{font-size:20px;line-height:1.5;color:rgba(0,0,0,.7);border-top:2px solid var(--ink);
+    padding-top:20px;margin-top:30px}
+
+  .closeBar{position:absolute;left:0;right:0;bottom:0;height:250px;z-index:13;background:var(--paper);
+    border-top:2px solid var(--ink);display:none;gap:2px;padding:24px 22px calc(24px + env(safe-area-inset-bottom))}
+  .closeBar.on{display:flex}
+  /* barras sobre las pantallas negras */
+  body.paper .closeBar,body.night #bar{background:var(--night);border-color:var(--paper)}
+  body.paper .closeBar .btn,body.night #bar .btn{border-color:var(--paper);color:var(--paper);background:transparent}
+  body.paper .closeBar .btn:active,body.night #bar .btn:active{background:var(--paper);color:var(--night)}
+  body.paper .closeBar .btn.hot,body.night #bar .btn.hot{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+
+  /* botón disimulado de respaldo de datos: casi invisible, esquina inferior izquierda */
+  #backup{position:fixed;left:10px;bottom:10px;z-index:60;width:38px;height:38px;padding:0;
+    background:transparent;border:none;color:var(--ink);opacity:.10;font-size:30px;line-height:1;
+    font-family:var(--mono);cursor:pointer}
+  #backup:active{opacity:.55}
+
+  /* botones dentro de pantallas oscuras */
+  #result .btn,#deleted .btn{border-color:var(--paper);color:var(--paper)}
+  #result .btn:active,#deleted .btn:active{background:var(--paper);color:var(--night)}
+  .screen .rowbtns{display:flex;gap:2px;margin-top:26px}
+  .screen .rowbtns .btn{flex:1;margin-top:0}
+
+  /* ---- pantalla amarilla: ¿ver las fotos? ---- */
+  #askphotos{background:var(--yellow);color:var(--ink);justify-content:space-between;padding:150px 64px 120px}
+  #askphotos .big{font-family:var(--disp);font-weight:900;font-size:118px;line-height:.9;text-transform:uppercase;
+    letter-spacing:-2px}
+  #askphotos .mid{font-size:34px;line-height:1.3;font-weight:600;margin:34px 0}
+  #askphotos .call{font-family:var(--disp);font-weight:900;font-size:64px;line-height:.95;text-transform:uppercase;
+    border-top:5px solid var(--ink);padding-top:26px;margin-top:10px}
+  #askphotos .bar2{height:24px;border:3px solid var(--ink);padding:4px;margin-top:20px}
+  #askphotos .bar2 i{display:block;height:100%;width:0%;background:var(--ink)}
+
+  /* ---- pantalla final: fotos grandes en vertical + datos ---- */
+  #photos{padding:0 64px 120px;justify-content:flex-start}
+  #pick{padding:0;justify-content:flex-start;overflow:hidden}
+  #pickScroll{flex:1 1 auto;overflow:auto;width:100%;padding:34px 64px 120px}
+  #phAsk{position:sticky;top:0;z-index:5;background:var(--ink);color:var(--paper);
+    font-family:var(--disp);font-weight:900;font-size:96px;line-height:.92;text-transform:uppercase;
+    letter-spacing:-1.5px;padding:64px 64px 30px;margin:0 -64px 34px}
+  #pickAsk{flex:0 0 auto;position:static;background:var(--ink);color:var(--paper);
+    font-family:var(--disp);font-weight:900;font-size:62px;line-height:.98;text-transform:uppercase;
+    letter-spacing:-1px;padding:60px 64px 26px;margin:0}
+  #phAsk .hl,#pickAsk .hl{color:var(--yellow)}
+  #mineTop{border:3px solid var(--ink);background:var(--yellow);padding:24px 26px;margin-bottom:28px;
+    font-size:31px;line-height:1.35}
+  #mineTop b{font-family:var(--disp);font-size:48px}
+  #grid,#pickGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:44px}
+  .shot{border:3px solid var(--ink);position:relative;background:var(--white)}
+  .shot img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;
+    filter:grayscale(1) contrast(1.05)}
+  .shot.pick{cursor:pointer;transition:transform .08s}
+  .shot.pick:active{transform:scale(.97);outline:8px solid var(--yellow);outline-offset:-4px}
+  .shot .lab{position:absolute;left:0;bottom:0;right:0;background:var(--ink);color:var(--paper);
+    font-size:19px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 13px;
+    display:flex;justify-content:space-between;align-items:center}
+  .shot.smile .lab{background:var(--yellow);color:var(--ink)}
+  .shot .mk{font-weight:700}
+  #photosNote,#pickNote{font-size:21px;line-height:1.5;color:rgba(0,0,0,.72);border-top:2px solid var(--ink);
+    padding-top:20px;margin:34px 0 6px}
+  .delhint{font-family:var(--disp);font-weight:900;font-size:44px;line-height:1.02;text-transform:uppercase;
+    border-top:4px solid var(--ink);padding-top:26px;margin-top:20px}
+
+  /* ---- borrado ---- */
+  #deleted{background:var(--night);color:var(--paper);justify-content:center}
+  #deleted .k{font-family:var(--disp);font-weight:900;font-size:108px;line-height:.86;text-transform:uppercase;
+    color:var(--yellow);margin-bottom:34px;letter-spacing:-2px}
+  #deleted p{font-size:32px;line-height:1.4;color:var(--white)}
+  #deleted .anon{font-family:var(--mono);font-size:22px;line-height:1.55;letter-spacing:.5px;
+    color:var(--yellow);max-width:820px;margin:44px auto 0;padding-top:26px;
+    border-top:2px solid rgba(245,218,223,.28)}
+
+  /* ---- datos aparte (sin fotos) ---- */
+  #stats{padding-top:100px;justify-content:flex-start}
+  #stats .huge{font-family:var(--disp);font-weight:900;font-size:300px;line-height:.72;letter-spacing:-8px;
+    color:var(--ink)}
+  #stats .hcap{font-size:22px;letter-spacing:4px;text-transform:uppercase;color:rgba(0,0,0,.62);
+    margin:2px 0 44px;border-bottom:3px solid var(--ink);padding-bottom:22px}
+  #cmpbar,#dCmp{display:flex;height:120px;border:3px solid var(--ink);margin:0 0 12px}
+  #cmpbar .s,#dCmp .s{background:var(--yellow);display:flex;align-items:flex-end;justify-content:flex-start}
+  #cmpbar .a,#dCmp .a{background:var(--ink);display:flex;align-items:flex-end;justify-content:flex-end}
+  #cmpbar b,#dCmp b{font-family:var(--disp);font-weight:900;font-size:40px;line-height:1;padding:14px}
+  #cmpbar .s b,#dCmp .s b{color:var(--ink)} #cmpbar .a b,#dCmp .a b{color:var(--paper)}
+  #cmplabels,#dLabels{display:flex;justify-content:space-between;font-size:18px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--ink);margin-bottom:44px}
+  #mine{border:3px solid var(--ink);padding:26px;margin-bottom:20px;font-size:30px;line-height:1.4}
+  #mine b{font-family:var(--disp);font-size:44px}
+  #statsClose{font-size:24px;line-height:1.5;color:var(--ink);border-top:2px solid var(--ink);
+    padding-top:22px;margin-top:10px}
+  #statsClose .q{font-family:var(--disp);font-weight:900;font-size:52px;line-height:.98;text-transform:uppercase;
+    margin-top:14px}
+</style>
+
+<div id="app">
+  <video id="cam" autoplay playsinline webkit-playsinline muted></video>
+  <div id="duoM"></div><div id="duoS"></div>
+  <canvas id="fx"></canvas>
+  <div id="scan"></div><div id="grain"></div>
+  <div id="choir"></div>
+  <div class="crop tl"></div><div class="crop tr"></div><div class="crop bl"></div><div class="crop br"></div>
+
+  <div id="topstrip">
+    <div class="l">Diseñado y producido por Contradatos <em>· @contradatospregunta</em></div>
+    <div class="r"><span><span class="rec"></span><span id="tMode">Evaluando</span></span><span id="tPeople">Registro 0</span></div>
+  </div>
+  <div id="prog"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <div id="slab">
+    <div id="slabhead"><span id="qidx">Pregunta 01 / 05</span><span id="qtag">Evaluación de felicidad</span></div>
+    <div id="qtext">—</div>
+    <div id="coach">Hola, soy tu coach de la felicidad.</div>
+  </div>
+
+  <div id="askq">
+    <div class="head"><span>Evaluación de felicidad</span><span class="count" id="aqCount">01<small>/05</small></span></div>
+    <div class="body"><div id="aqText">—</div></div>
+    <div class="foot">
+      <div class="call">Levanta la mano<br>si estás listx para responder</div>
+      <div class="bar"><i id="aqBar"></i></div>
+      <div class="hint" id="aqHint">Cualquier brazo, por encima de tu cabeza</div>
+    </div>
+  </div>
+
+  <div id="split">
+    <div id="midline"></div>
+    <div class="half" id="hSi"><div class="fill"></div><div class="big">SÍ</div><div class="sub" id="subSi">Párate aquí y sonríe</div></div>
+    <div class="half" id="hNo"><div class="fill"></div><div class="big">NO</div><div class="sub" id="subNo">Párate aquí y frunce el ceño</div></div>
+  </div>
+
+  <div id="order"><b>—</b><small>—</small></div>
+
+  <div id="telem">
+    <span>Sonrisa <b id="tSmile">0%</b></span>
+    <span class="bar"><i id="tSmileBar"></i></span>
+    <span>Lado <b id="tSide">—</b></span>
+    <span>Pregunta <b id="tQ">0</b>/5</span>
+    <span>Puntaje <b id="tScore">0</b>/10</span>
+  </div>
+
+  <div id="bar">
+    <button class="btn" id="btnRestart">Reiniciar</button>
+    <button class="btn hot" id="btnKj">Aguafiestas</button>
+    <button class="btn" id="btnData">Datos</button>
+  </div>
+
+  <section class="screen on" id="intro">
+    <div class="eyebrow">Coach de la felicidad</div>
+    <div class="title">LA<br>AGUA<br><span>FIESTAS</span></div>
+    <div class="rule"></div>
+    <ol>
+      <li>Cinco preguntas. Ninguna se salta.</li>
+      <li>Izquierda es SÍ. Derecha es NO.</li>
+      <li>El SÍ solo cuenta si sonríes.</li>
+      <li>El NO solo cuenta si te enojas.</li>
+      <li>Cada sí suma un punto sobre cinco.</li>
+    </ol>
+    <p class="dim" id="introWarn"></p>
+    <button class="btn" id="btnStart">Empezar la evaluación</button>
+  </section>
+
+  <section class="screen" id="result">
+    <div class="num" id="rNum">0</div>
+    <div class="over" id="rOver">de 5 en felicidad</div>
+    <div class="verdict" id="rVerdict"></div>
+    <div class="cmp" id="rCmp"></div>
+  </section>
+
+  <section class="screen" id="data">
+    <h2>Todas las<br>que han pasado</h2>
+    <p class="sub2" id="dTop"></p>
+    <div class="kpis">
+      <div class="kpi"><b id="dPeople">0</b><span>Personas evaluadas</span></div>
+      <div class="kpi"><b id="dSmiles">0</b><span>Sonrisas exigidas</span></div>
+      <div class="kpi"><b id="dAnnoy">0</b><span>Molestias</span></div>
+    </div>
+    <p class="sect">Sonrisas vs. molestias</p>
+    <div id="dCmp"><div class="s"><b id="dSpct">0%</b></div><div class="a"><b id="dApct">0%</b></div></div>
+    <div id="dLabels"><span id="dSlab">Sonrisas</span><span id="dAlab">Molestias</span></div>
+    <p id="dataNote"></p>
+  </section>
+
+  <section class="screen" id="photos">
+    <div class="ask" id="phAsk">¿Cuánto de tu sonrisa es <span class="hl">real</span> y cuánto es una <span class="hl">pose</span>?</div>
+    <div id="mineTop"></div>
+    <div id="grid"></div>
+    <p class="sect" style="margin-top:10px">Todas las personas que han pasado</p>
+    <div id="cmpbar"><div class="s"><b id="stSpct">0%</b></div><div class="a"><b id="stApct">0%</b></div></div>
+    <div id="cmplabels"><span id="stSlab">Sonrisas</span><span id="stAlab">Molestias</span></div>
+    <div class="kpis">
+      <div class="kpi"><b id="stPeople">0</b><span>Personas evaluadas</span></div>
+      <div class="kpi"><b id="stSmiles">0</b><span>Sonrisas exigidas</span></div>
+      <div class="kpi"><b id="stAnnoy">0</b><span>Molestias</span></div>
+    </div>
+    <p id="photosNote">Estas fotos solo existen en esta sesión, en este equipo. Tú decides: puedes dejarlas para la exposición o borrarlas ahora.</p>
+    <div class="delhint">¿Guardamos estas fotos para la exposición?</div>
+    <div class="rowbtns">
+      <button class="btn hot" id="phSave">Guardar para la exposición</button>
+      <button class="btn" id="phDelete">Borrar las fotos</button>
+    </div>
+  </section>
+
+  <section class="screen" id="pick">
+    <div class="ask" id="pickAsk">Escoge la fotografía <span class="hl">menos genuina</span> para descargar.</div>
+    <div id="pickScroll">
+      <div id="pickGrid"></div>
+      <p id="pickNote">Toca una foto. Solo esa se descargará; las demás no se guardan.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="deleted">
+    <div class="k" id="delK">Tus fotos<br>han sido<br>eliminadas<br>para siempre.</div>
+    <p id="delP">Pero, ¿tus reacciones fueron genuinas?</p>
+    <p class="anon">Estos datos quedan anónimos. Ninguna fotografía se asociará a ningún dato.</p>
+  </section>
+
+  <section class="screen" id="fallback">
+    <h2 id="fbTitle">Cámara no disponible</h2>
+    <p id="fbMsg"></p>
+    <p class="dim">Puedes continuar sin cámara tocando el lado izquierdo o derecho. En ese modo no se exige la sonrisa.</p>
+    <button class="btn" id="btnFbSkip">Continuar sin cámara</button>
+  </section>
+
+  <div class="closeBar" id="closeBar">
+    <button class="btn" id="btnClose">Volver</button>
+    <button class="btn" id="dDownload">Descargar datos</button>
+    <button class="btn hot" id="btnReset2">Reiniciar</button>
+  </div>
+</div>
+
+<button id="backup" title="Respaldo de datos">·</button>
+
+<script>
+/* ===== escalado ===== */
+const app=document.getElementById('app');
+function fit(){ const s=Math.min(innerWidth/1080, innerHeight/1920);
+  app.style.transform='translate(-50%,-50%) scale('+s+')'; }
+addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,120)); fit();
+
+/* ===== coro del afiche ===== */
+(function(){
+  const frases=['"No nos gustan las mujeres que no sonríen"','"Trabaja más duro"','"Todo lo puedes"',
+    '"Sonríe más"','"Sé positiva"','"Tú puedes con todo"','"No te quejes"','"Depende de ti"'];
+  const c=document.getElementById('choir');
+  const pos=[[4,60],[16,10],[27,300],[38,90],[52,520],[63,20],[74,380],[86,140],[92,600],[10,900],[45,1200],[70,1000]];
+  pos.forEach((p,i)=>{ const s=document.createElement('span');
+    s.textContent=frases[i%frases.length]; s.style.left=p[0]+'%'; s.style.top=p[1]+'px';
+    c.appendChild(s); });
+})();
+
+/* ===== bancos ===== */
+const COACH_BANK=[
+ {q:"¿Ya cumpliste tus planes de viajar?",
+  fs:[["QUÉ ENVIDIA","El mundo es de quien se atreve"],["ESO ES VIVIR","Se nota que te la gozas"]],
+  fn:[["¿QUÉ ESPERAS?","El mundo no se recorre solo"],["SIN EXCUSAS","Solo hay que decidirse"]],
+  r:"Viajar cuesta pasaje, visa y días libres que alguien más tiene que cubrir. No es falta de actitud: es un privilegio con precio."},
+ {q:"¿Ya tienes el trabajo de tus sueños?",
+  fs:[["ASÍ SE HACE","Se nota que te apasiona"],["QUÉ ORGULLO","Eso es tener claridad"]],
+  fn:[["TE FALTÓ EMPUJE","Nadie llega quedándose quieta"],["ATRÉVETE","Renuncia y persigue tu sueño"]],
+  r:"Casi la mitad del empleo en el país es informal. El trabajo soñado se le ofrece a quien pudo estudiar sin trabajar al mismo tiempo."},
+ {q:"¿Ya encontraste tu propósito?",
+  fs:[["QUÉ CLARIDAD","Eso inspira a otras"],["VAS ALINEADA","El universo te acompaña"]],
+  fn:[["BÚSCATE MÁS","Nadie lo va a encontrar por ti"],["MEDITA MÁS","Tu propósito ya está adentro"]],
+  r:"Buscar propósito necesita horas libres. Quien sostiene una casa y un turno no tiene esa hora para buscarse."},
+ {q:"¿Ya estás donde querías estar a esta edad?",
+  fs:[["PUNTUAL CON LA VIDA","Vas justo a tiempo"],["QUÉ EJEMPLO","Ese es el camino"]],
+  fn:[["VAS ATRASADA","El tiempo no espera a nadie"],["SE TE VA LA VIDA","Otras ya llegaron"]],
+  r:"El reloj con el que te miden lo puso otra persona. Y no corre igual para todas."},
+ {q:"¿Ya vives de lo que te apasiona?",
+  fs:[["ESO ES ÉXITO","Trabajar amando no es trabajar"],["QUÉ AFORTUNADA","Y lo lograste tú sola"]],
+  fn:[["ARRIÉSGATE","Nadie triunfa en la comodidad"],["DEJA ESE MIEDO","La pasión se paga sola"]],
+  r:"Vivir de la pasión casi siempre necesita un colchón que te sostenga mientras arranca. Ese colchón se hereda."},
+ {q:"¿Ya te independizaste?",
+  fs:[["QUÉ AUTONOMÍA","Tu espacio, tus reglas"],["BIEN AHÍ","Eso es ser adulta"]],
+  fn:[["¿TODAVÍA NO?","A tu edad ya deberías"],["SUELTA EL NIDO","Nadie crece protegida"]],
+  r:"El arriendo subió más rápido que el salario. Vivir con tu familia no es un fracaso personal."},
+ {q:"¿Ya tienes casa propia?",
+  fs:[["ESO SÍ ES FUTURO","Lo tuyo es tuyo"],["QUÉ SEGURIDAD","Construiste patrimonio"]],
+  fn:[["ESTÁS PERDIENDO PLATA","El arriendo es dinero botado"],["ORGANÍZATE","Todo es cuestión de ahorrar"]],
+  r:"Una casa cuesta hoy muchos años de un salario mínimo completo. Eso no se resuelve con disciplina."},
+ {q:"¿Ya estás ahorrando para tus sueños?",
+  fs:[["QUÉ DISCIPLINA","Así se construye"],["VAS MUY BIEN","Tu futuro te lo agradece"]],
+  fn:[["DEJA LOS GUSTICOS","Ahí se te va la plata"],["ES CUESTIÓN DE ORDEN","Empieza por el diez por ciento"]],
+  r:"Solo ahorra quien tiene un excedente. Sin excedente no hay ahorro, por más constancia que pongas."},
+ {q:"¿Ya invertiste en ti este año?",
+  fs:[["INVERSIÓN SEGURA","Tú eres tu mejor activo"],["ASÍ SE CRECE","Eso vuelve multiplicado"]],
+  fn:[["NO TE ABANDONES","Ahorrar en ti sale caro"],["MERECES MÁS","Un curso te cambia la vida"]],
+  r:"Invertir en ti casi siempre significa pagar. El bienestar es una industria y tú eres el mercado."},
+ {q:"¿Ya hiciste ejercicio?",
+  fs:[["ESA ES LA ACTITUD","Se te nota la energía"],["QUÉ CONSTANCIA","Cuerpo sano, mente sana"]],
+  fn:[["SIN EXCUSAS","Siempre hay veinte minutos"],["MUÉVETE","Nadie lo va a hacer por ti"]],
+  r:"Moverse necesita tiempo, calles seguras y a veces plata. No todas tienen las tres cosas."},
+ {q:"¿Ya comiste saludable?",
+  fs:[["TE ESTÁS CUIDANDO","Tu cuerpo es tu templo"],["QUÉ EJEMPLO","Comer bien es amarse"]],
+  fn:[["ESO SE NOTA","Lo que comes te define"],["MÁS VOLUNTAD","Es solo cuestión de decidir"]],
+  r:"Comer bien cuesta más que comer lleno. Es un asunto de precios, no de fuerza de voluntad."},
+ {q:"¿Ya tienes la familia que soñabas?",
+  fs:[["QUÉ BENDICIÓN","Eso es lo que de verdad importa"],["FAMILIA PRIMERO","Ahí está tu fortaleza"]],
+  fn:[["SE TE HACE TARDE","El reloj no perdona"],["NO TE CIERRES","Todavía estás a tiempo"]],
+  r:"La familia soñada que te mostraron es una sola. Hay muchas otras y también sostienen la vida."},
+ {q:"¿Ya te tomaste esas vacaciones que mereces?",
+  fs:[["TE LO MERECÍAS","Descansar también es producir"],["QUÉ BIEN","Recargaste energía"]],
+  fn:[["DATE PERMISO","Nadie te va a regalar el descanso"],["QUÉ DESCUIDO","Así se llega al agotamiento"]],
+  r:"Las vacaciones pagas son un derecho laboral que millones de personas no tienen. Merecerlas no alcanza."},
+ {q:"¿Ya tienes una dieta saludable?",
+  fs:[["QUÉ COMPROMISO","Eres lo que comes"],["SIGUE ASÍ","Tu yo del futuro te lo agradece"]],
+  fn:[["EMPIEZA HOY","El lunes nunca llega"],["ES DECISIÓN TUYA","Nadie come por ti"]],
+  r:"La dieta también es un negocio. Y el cuerpo que te venden como sano suele ser joven, delgado y blanco."},
+ {q:"¿Ya estudiaste lo que querías?",
+  fs:[["QUÉ LOGRO","Eso nadie te lo quita"],["BIEN HECHO","El estudio nunca se pierde"]],
+  fn:[["NUNCA ES TARDE","Hay cursos gratis en internet"],["TE FALTARON GANAS","Querer es poder"]],
+  r:"Estudiar lo que querías depende de dónde naciste y de quién pudo pagarlo. El mérito llega después, no antes."}
+];
+
+
+/* key = la respuesta que nombra la estructura */
+const KJ_BANK=[
+ {q:"¿Te han dicho alguna vez que sonrías?", key:"si",
+  fs:[["NO ERES LA ÚNICA","Casi todas hemos oído esa frase"]],
+  fn:[["QUÉ SUERTE","Hay quien nunca ha tenido que oírlo"]],
+  r:"Esa frase casi nunca se la dicen a un hombre. La cara amable es trabajo y está repartido por género."},
+ {q:"¿Has fingido estar bien para no incomodar?", key:"si",
+  fs:[["ESO TAMBIÉN ES TRABAJO","Y nadie te lo paga"]],
+  fn:[["ANOTADO","No todas pueden decir lo mismo"]],
+  r:"Sostener el buen ambiente de los demás también es trabajo. Invisible y no pagado."},
+ {q:"¿A las mujeres se les exige sonreír más?", key:"si",
+  fs:[["SE NOTA CUANDO SE MIRA","La amabilidad no se pide igual"]],
+  fn:[["QUEDA LA PREGUNTA","Fíjate la próxima vez"]],
+  r:"La amabilidad obligatoria es una de las formas más viejas de disciplinar a las mujeres."},
+ {q:"¿Ser feliz depende de cuánta plata tienes?", key:"si",
+  fs:[["LA FELICIDAD TIENE PRECIO","Y no todas pueden pagarlo"]],
+  fn:[["OJALÁ NO","Pero mira cuánto cuesta cuidarse"]],
+  r:"La felicidad que se vende cuesta: terapia, gimnasio, viajes, tiempo libre. Es un producto de clase."},
+ {q:"¿Alguien sostuvo tu vida hoy sin que le pagaran?", key:"si",
+  fs:[["ESO SOSTIENE TODO","Y no aparece en ninguna cuenta"]],
+  fn:[["PIÉNSALO OTRA VEZ","Alguien cocinó, alguien limpió"]],
+  r:"Cocinar, cuidar, limpiar, escuchar. Sin ese trabajo no pagado no se sostiene ninguna economía."},
+ {q:"¿Cuidar de otros te ha quitado tiempo de tu vida?", key:"si",
+  fs:[["ESE TIEMPO SALIÓ DE TI","Y de nadie más"]],
+  fn:[["ANOTADO","El cuidado siempre le sale a alguien"]],
+  r:"El tiempo de cuidado sale de la vida de alguien. Casi siempre de la de una mujer."},
+ {q:"¿Te han hecho sentir culpable por estar cansada?", key:"si",
+  fs:[["EL CANSANCIO NO ES UN DEFECTO","Es una señal"]],
+  fn:[["QUÉ BUENO","No a todas les creen el cansancio"]],
+  r:"El cansancio se volvió falta de actitud. Antes era una razón para organizarse."},
+ {q:"¿El mérito explica dónde estás hoy?", key:"no",
+  fs:[["ESO NOS ENSEÑARON","Piensa quién pudo empezar antes"]],
+  fn:[["EXACTO","Primero está el origen"]],
+  r:"El mérito llega después del origen: dónde naciste, quién pagó, cómo te leen el cuerpo y el apellido."},
+ {q:"¿Has tenido que trabajar mientras estudiabas?", key:"si",
+  fs:[["ESTUDIASTE DOBLE","Y contra el reloj"]],
+  fn:[["ESO ES UNA BECA INVISIBLE","No todas la reciben"]],
+  r:"Estudiar sin trabajar es una beca invisible que unas familias dan y otras no pueden dar."},
+ {q:"¿El bienestar se volvió un negocio?", key:"si",
+  fs:[["Y CRECE CONTIGO","Cuando te sientes insuficiente"]],
+  fn:[["MIRA LOS PRECIOS","Después vuelve a esta pregunta"]],
+  r:"Cursos, retiros, aplicaciones, coaching. La industria crece cuando tú te sientes insuficiente."},
+ {q:"¿A unas mujeres se les perdona menos el mal genio?", key:"si",
+  fs:[["NO SE CASTIGA IGUAL","Depende de quién se enoja"]],
+  fn:[["QUEDA LA PREGUNTA","Fíjate a quién llaman agresiva"]],
+  r:"La negra agresiva, la indígena conflictiva, la pobre resentida. El enojo se castiga distinto según quién lo tiene."},
+ {q:"¿Estar enojada también es legítimo?", key:"si",
+  fs:[["EL ENOJO TAMBIÉN PIENSA","No es un defecto de carácter"]],
+  fn:[["ESO NOS ENSEÑARON","Que la rabia era mala educación"]],
+  r:"El enojo es una lectura del mundo. Nombrar lo que duele no es un defecto de carácter."},
+ {q:"¿La tristeza también puede ser política?", key:"si",
+  fs:[["NO TODO ES QUÍMICA","A veces es el arriendo"]],
+  fn:[["PIÉNSALO","Hay tristezas con causa afuera"]],
+  r:"Hay tristezas que no son químicas: son salarios, duelos, desplazamientos, cuentas sin pagar."},
+ {q:"¿La felicidad que te venden se parece a tu vida?", key:"no",
+  fs:[["QUÉ RARO","Casi nadie vive en esa imagen"]],
+  fn:[["EXACTO","Esa vida es de muy pocas"]],
+  r:"Esa imagen suele ser blanca, delgada, sin deudas y sin nadie a cargo. Casi nadie vive ahí."},
+ {q:"¿Arruinarías una fiesta por decir la verdad?", key:"si",
+  fs:[["ESO ES SER AGUAFIESTAS","Y no es un insulto"]],
+  fn:[["ANOTADO","Nombrar cuesta y no siempre se puede"]],
+  r:"Eso es ser aguafiestas: no dañas el ambiente, nombras lo que ya estaba dañado."}
+];
+
+
+/* lo que la máquina dice si te paras en el SÍ sin sonreír */
+/* Los cuatro rangos del veredicto, sobre 5 preguntas */
+const RANGOS=[
+ {min:0,max:1,t:'AGUAFIESTAS. NO ERES LO SUFICIENTEMENTE FELIZ',c:'0 o 1 respuestas afirmativas'},
+ {min:2,max:3,t:'NO TE ESTÁS ESFORZANDO LO SUFICIENTE',c:'2 o 3 respuestas afirmativas'},
+ {min:4,max:4,t:'YA CASI ALCANZAS LA FELICIDAD DE TUS SUEÑOS',c:'4 respuestas afirmativas'},
+ {min:5,max:5,t:'ERES MUY FELIZ. PERO PUEDES SEGUIR ESFORZÁNDOTE. NUNCA ES SUFICIENTE',c:'5 respuestas afirmativas'}
+];
+function rangoDe(v){ for(let i=0;i<RANGOS.length;i++) if(v>=RANGOS[i].min&&v<=RANGOS[i].max) return i; return 0; }
+
+const NAG=["SONRÍE MÁS","MÁS ARRIBA ESA SONRISA","NO SE TE NOTA","SONRÍE DE VERDAD","UNA SONRISA MÁS GRANDE","ESA NO CUENTA","QUE SE VEAN LOS DIENTES"];
+const NAG_SUB=["El sí solo cuenta si sonríes","Que se te note la felicidad","Un poco más y sumas el punto","Tú puedes, es solo una sonrisa","Nadie te está pidiendo tanto"];
+/* reproches sueltos que la máquina intercala en el NO */
+const NO_MSG=["¿POR QUÉ TAN SERIA?","NO SEAS AMARGADA","AGUAFIESTAS","QUÉ GENIO","NO ES PARA TANTO","ESTÁS EXAGERANDO","QUÉ SENSIBLE"];
+const NO_SUB=["Solo era un chiste","Nadie quiere estar cerca de alguien negativa","No te pongas así","Era por tu bien","Qué falta de actitud"];
+/* el NO ya no basta con no sonreír: hay que enojarse. La máquina lo exige */
+const NO_ANGRY=["MUÉSTRAME ESE ENOJO","FRUNCE EL CEÑO","QUE SE VEA LA RABIA","MÁS MOLESTIA","NO TE CONTENGAS"];
+const NO_ANGRY_SUB=["El no solo cuenta si te enojas","Que se te note la molestia en la cara","Un poco más de ceño y sumas","No pasa nada por mostrarlo","Deja salir ese fastidio"];
+const C_IN=["Hola, soy tu coach de la felicidad.","Recuerda: esto depende de ti.","Otras mujeres ya respondieron que sí.","Respira, sonríe, sigue. En ese orden.","Vas muy bien. No aflojes."];
+const C_YES=["¡Muy bien! Esa sonrisa suma doble.","Así se ve la felicidad. Dos puntos.","Perfecto. Se te notó."];
+const C_NO=["Ese no también es información.","No te desanimes, todavía puedes recuperar el puntaje.","No es que estés mal, es que puedes estar mejor."];
+const K_IN=["Aquí no tienes que poner ninguna cara.","Responde como estés. Nadie te va a calificar la sonrisa.","Esta vez la pregunta no es sobre ti sola.","Puedes estar seria. Puedes estar brava.","Tómate el tiempo que necesites."];
+const K_HIT=["Eso. Nombraste la estructura.","Ahí está. Eso no es asunto tuyo solamente.","Exacto. No es falta de actitud."];
+const K_MISS=["Puede ser. Quédate con la duda.","Anotado. Piénsalo otro rato.","Está bien. No hay respuesta obligatoria."];
+
+/* ===== almacenamiento ===== */
+const KEY='aguafiestas_v4'; let mem=null;
+function loadDB(){ if(mem) return mem;
+  try{ const raw=localStorage.getItem(KEY); mem=raw?JSON.parse(raw):{sessions:[]}; }catch(e){ mem={sessions:[]}; }
+  if(!mem.sessions) mem.sessions=[]; return mem; }
+function saveDB(db){ mem=db; try{ localStorage.setItem(KEY,JSON.stringify(db)); }catch(e){} }
+
+/* ===== elementos ===== */
+const cam=document.getElementById('cam'), fx=document.getElementById('fx'), ctx=fx.getContext('2d');
+const slab=document.getElementById('slab'), qtext=document.getElementById('qtext'), qidx=document.getElementById('qidx'),
+      qtag=document.getElementById('qtag'), coach=document.getElementById('coach'), prog=document.getElementById('prog');
+const split=document.getElementById('split'), hSi=document.getElementById('hSi'), hNo=document.getElementById('hNo');
+const askq=document.getElementById('askq'), aqText=document.getElementById('aqText'),
+      aqCount=document.getElementById('aqCount'), aqBar=document.getElementById('aqBar'), aqHint=document.getElementById('aqHint');
+const fillSi=hSi.querySelector('.fill'), fillNo=hNo.querySelector('.fill');
+const subSi=document.getElementById('subSi'), subNo=document.getElementById('subNo');
+const order=document.getElementById('order'), orderB=order.querySelector('b'), orderS=order.querySelector('small');
+const tSmile=document.getElementById('tSmile'), tSmileBar=document.getElementById('tSmileBar'),
+      tQ=document.getElementById('tQ'),
+      tSide=document.getElementById('tSide'), tScore=document.getElementById('tScore'),
+      tPeople=document.getElementById('tPeople'), tMode=document.getElementById('tMode');
+const screens={intro:document.getElementById('intro'),result:document.getElementById('result'),
+  data:document.getElementById('data'),
+  photos:document.getElementById('photos'),pick:document.getElementById('pick'),
+  deleted:document.getElementById('deleted'),
+  fallback:document.getElementById('fallback')};
+const closeBar=document.getElementById('closeBar'), bar=document.getElementById('bar');
+const OWNBAR=['intro','fallback','photos','pick','deleted']; // pantallas con sus propios botones
+
+function show(n){
+  Object.keys(screens).forEach(k=>screens[k].classList.toggle('on',k===n));
+  closeBar.classList.toggle('on', n==='data');
+  bar.style.display=(n==='data'||OWNBAR.includes(n))?'none':'flex';
+  document.body.classList.toggle('night', n==='result'||n==='deleted');
+}
+function hideScreens(){ Object.keys(screens).forEach(k=>screens[k].classList.remove('on'));
+  closeBar.classList.remove('on'); bar.style.display='flex';
+  document.body.classList.remove('paper'); document.body.classList.remove('night'); }
+
+/* ===== estado ===== */
+const TOTAL=5, HOLD=2000;   // la barra sube en 2 segundos (1 s más rápido)
+let mode='coach', phase='idle', queue=[], qi=0, answers=[], score=0, forced=0;
+let sideNow=null, holdT=0, lastFaceT=0, faceSig=null, mism=0, noCam=false, nagI=0, nagT=0;
+let smSi=0, smNo=0;   // conteo suavizado de sonrisas por lado (para que la competencia no parpadee)
+let raiseT=0, poseLm=null;
+let shots=[], endStage=null, endTimer=0;   // fotos de la sesión (solo en memoria) y etapa del cierre
+const RAISE_MS=700;
+
+/* ===== lectura de expresión, calibrada a cada rostro =====
+   Cada persona tiene una cara en reposo distinta: unas sonríen un poco siempre,
+   otras tienen el ceño naturalmente marcado. Por eso no se usan umbrales fijos:
+   se sigue la línea base propia de quien está al frente y se mide cuánto se aleja. */
+const EX={sm:0, fr:0, bSm:.03, bFr:.03, has:false};
+function resetExpr(){ EX.sm=0; EX.fr=0; EX.bSm=.03; EX.bFr=.03; }
+function readExpr(bs){
+  const m={}; bs.categories.forEach(c=>m[c.categoryName]=c.score);
+  const g=k=>m[k]||0;
+  const smRaw = Math.max(g('mouthSmileLeft'),g('mouthSmileRight'))*.72
+              + Math.max(g('cheekSquintLeft'),g('cheekSquintRight'))*.28;
+  const frRaw = Math.max(g('browDownLeft'),g('browDownRight'))*.42
+              + Math.max(g('mouthFrownLeft'),g('mouthFrownRight'))*.33
+              + Math.max(g('mouthPressLeft'),g('mouthPressRight'))*.15
+              + Math.max(g('noseSneerLeft'),g('noseSneerRight'))*.10;
+  EX.sm += (smRaw-EX.sm)*.32;
+  EX.fr += (frRaw-EX.fr)*.32;
+  EX.bSm += (EX.sm<EX.bSm) ? (EX.sm-EX.bSm)*.09 : .00007;
+  EX.bFr += (EX.fr<EX.bFr) ? (EX.fr-EX.bFr)*.09 : .00007;
+  EX.bSm=Math.max(0,Math.min(.45,EX.bSm)); EX.bFr=Math.max(0,Math.min(.45,EX.bFr));
+  EX.has=true;
+}
+const clamp01=v=>Math.max(0,Math.min(1,v));
+function smileN(){ return clamp01((EX.sm-EX.bSm)/0.26); }
+function frownN(){ return clamp01((EX.fr-EX.bFr)/0.28); }
+let lockSi=false, lockNo=false;
+function BANK(){ return mode==='coach'?COACH_BANK:KJ_BANK; }
+
+function refreshPeople(){ tPeople.textContent='Registro '+loadDB().sessions.length; }
+refreshPeople();
+function pickN(b,n){ const i=b.map((_,k)=>k);
+  for(let k=i.length-1;k>0;k--){ const j=Math.floor(Math.random()*(k+1)); [i[k],i[j]]=[i[j],i[k]]; }
+  return i.slice(0,n); }
+function renderProg(){ [...prog.children].forEach((el,k)=>{ el.className=k<qi?'done':(k===qi?'now':''); }); }
+
+function startSession(m){
+  if(m) mode=m;
+  document.body.classList.toggle('kj', mode==='kj');
+  clearTimeout(endTimer); endStage=null; shots=[];   // sesión nueva: se borra todo lo de la anterior
+  hideScreens();
+  queue=pickN(BANK(),TOTAL); qi=0; answers=[]; score=0; forced=0;
+  tScore.textContent='0';
+  tMode.textContent = mode==='coach'?'Evaluando':'Modo aguafiestas';
+  qtag.textContent = mode==='coach'?'Evaluación de felicidad':'Preguntas aguafiestas';
+  subSi.textContent = mode==='coach'?'Párate aquí y sonríe':'Párate aquí';
+  subNo.textContent = mode==='coach'?'Párate aquí y frunce el ceño':'Párate aquí';
+  fillSi.style.height='0%'; fillNo.style.height='0%';
+  resetExpr(); lockSi=false; lockNo=false;
+  ask();
+}
+function ask(){
+  if(qi>=TOTAL){ finish(); return; }
+  renderProg();
+  const q=BANK()[queue[qi]].q;
+  qidx.textContent='Pregunta '+String(qi+1).padStart(2,'0')+' / '+TOTAL;
+  qtext.textContent=q;
+  aqText.textContent=q;
+  aqText.style.fontSize = (q.length>46?104:q.length>34?126:150)+'px';
+  aqCount.innerHTML=String(qi+1).padStart(2,'0')+'<small>/0'+TOTAL+'</small>';
+  tQ.textContent=(qi+1);
+  coach.textContent=(mode==='coach'?C_IN:K_IN)[qi%5];
+  aqHint.textContent = noCam ? 'Toca la pantalla para responder' : 'Cualquier brazo, por encima de tu cabeza';
+  aqBar.style.width='0%'; raiseT=0;
+  slab.classList.remove('on'); split.classList.remove('on'); setOrder(null);
+  askq.classList.add('on');
+  phase='reading';
+}
+function beginAnswer(){
+  askq.classList.remove('on');
+  slab.classList.add('on'); split.classList.add('on');
+  holdT=0; sideNow=null; lockSi=false; lockNo=false; resetExpr();
+  phase='asking'; setOrder(null);
+}
+function setOrder(kind,txt,sub){
+  if(!kind){ order.classList.remove('on','bad'); return; }
+  order.classList.add('on'); order.classList.toggle('bad',kind==='bad');
+  orderB.textContent=txt; orderS.textContent=sub;
+  orderB.style.fontSize = (txt.length>17?84:txt.length>12?110:148)+'px';
+}
+function commit(side){
+  const yes=(side==='si'), idx=queue[qi];
+  answers.push({i:idx, yes});
+  /* foto en blanco y negro, solo en memoria de esta sesión */
+  const url=snap();
+  if(url) shots.push({qn:qi+1, yes, smile:(mode==='coach'&&yes), url});
+  if(mode==='coach'){
+    if(yes){ score++; forced++; }
+    coach.textContent = yes?C_YES[Math.floor(Math.random()*3)]:C_NO[Math.floor(Math.random()*3)];
+    setOrder(yes?'good':'bad', yes?'+1':'+0', yes?'Sonrisa registrada':'Sin sonrisa, sin punto');
+  }else{
+    const hit = (KJ_BANK[idx].key==='si')===yes;
+    if(hit) score++;
+    coach.textContent = hit?K_HIT[Math.floor(Math.random()*3)]:K_MISS[Math.floor(Math.random()*3)];
+    setOrder(hit?'good':'bad', hit?'+1':'+0', hit?'Eso ya no es culpa tuya':'Sin punto, sin reproche');
+  }
+  tScore.textContent=score;
+  phase='between'; qi++; renderProg(); holdT=0; lockSi=false; lockNo=false;
+  hSi.className='half'; hNo.className='half'; fillSi.style.height='0%'; fillNo.style.height='0%';
+  setTimeout(()=>{ if(phase==='between'){ setOrder(null); ask(); } },2100);
+}
+function finish(){
+  phase='done'; endStage='gallery';
+  slab.classList.remove('on'); split.classList.remove('on'); askq.classList.remove('on'); setOrder(null);
+  const yesN=answers.filter(a=>a.yes).length, noN=answers.length-yesN;
+  lastSession={t:Date.now(),mode,score,answers:answers.slice(),forced,
+    sm:(mode==='coach'?yesN:0), an:(mode==='coach'?noN:0)};
+  const db=loadDB(); db.sessions.push(lastSession); saveDB(db); refreshPeople();
+  renderFinal();
+  show('photos');   // apenas termina: fotos + datos, sin pantalla intermedia
+}
+
+/* ===== pantalla final: fotos, tus datos y los de todas ===== */
+function renderFinal(){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  if(!shots.length){ g.innerHTML='<p class="sub2" style="grid-column:1/-1">No se alcanzó a tomar ninguna foto en esta sesión.</p>'; }
+  shots.forEach(s=>{ const d=document.createElement('div'); d.className='shot'+(s.smile?' smile':'');
+    d.innerHTML='<img src="'+s.url+'" alt=""><div class="lab"><span>P'+s.qn+' · '+(s.yes?'SÍ':'NO')+'</span>'+
+      (s.smile?'<span class="mk">sonrisa</span>':'')+'</div>';
+    g.appendChild(d); });
+  /* tus datos */
+  const mS=lastSession?(lastSession.sm||0):0, mA=lastSession?(lastSession.an||0):0;
+  document.getElementById('mineTop').innerHTML =
+    'Sonreíste <b>'+mS+'</b> '+(mS===1?'vez':'veces')+' y te molestaste <b>'+mA+'</b> '+(mA===1?'vez':'veces')+'.';
+  /* datos de todas las personas: caras y porcentajes */
+  const S=loadDB().sessions.filter(x=>x.mode!=='kj');
+  let smiles=0, annoy=0;
+  S.forEach(x=>{ const y=(x.answers||[]).filter(a=>a.yes).length; smiles+=y; annoy+=(x.answers||[]).length-y; });
+  const people=S.length, tot=(smiles+annoy)||1;
+  const pS=Math.round(smiles/tot*100), pA=100-pS;
+  const cb=document.getElementById('cmpbar');
+  cb.querySelector('.s').style.width=pS+'%'; cb.querySelector('.a').style.width=pA+'%';
+  document.getElementById('stSpct').textContent=pS+'%';
+  document.getElementById('stApct').textContent=pA+'%';
+  document.getElementById('stSlab').textContent='Sonrisas · '+smiles;
+  document.getElementById('stAlab').textContent=annoy+' · Molestias';
+  document.getElementById('stPeople').textContent=people;
+  document.getElementById('stSmiles').textContent=smiles;
+  document.getElementById('stAnnoy').textContent=annoy;
+}
+
+/* ===== guardar / borrar las fotos (se le pregunta a la persona) ===== */
+function shotName(s,i){ const ts=(lastSession&&lastSession.t)||Date.now();
+  return 'aguafiestas_'+ts+'_'+String(i+1).padStart(2,'0')+'_P'+s.qn+'_'+(s.yes?'SI':'NO')+(s.smile?'_sonrisa':'')+'.jpg'; }
+/* al aceptar guardar, la persona elige UNA sola foto (la que sienta menos
+   genuina) y solo esa se descarga. Cada foto es tocable. */
+function showPick(){
+  if(!shots.length){ nextPerson(); return; }
+  const g=document.getElementById('pickGrid'); g.innerHTML='';
+  shots.forEach((s,i)=>{ const d=document.createElement('div'); d.className='shot pick'+(s.smile?' smile':'');
+    d.innerHTML='<img src="'+s.url+'" alt=""><div class="lab"><span>P'+s.qn+' · '+(s.yes?'SÍ':'NO')+'</span>'+
+      (s.smile?'<span class="mk">sonrisa</span>':'')+'</div>';
+    d.onclick=()=>downloadOne(s,i);
+    g.appendChild(d); });
+  show('pick');
+  const sc=document.getElementById('pickScroll'); sc.scrollTop=0;
+  requestAnimationFrame(()=>{ sc.scrollTop=0; });
+}
+function downloadOne(s,i){
+  const a=document.createElement('a'); a.href=s.url; a.download=shotName(s,i);
+  document.body.appendChild(a); a.click(); a.remove();     // una sola descarga, con el toque como gesto
+  endMsg('Foto guardada<br>para la exposición.','Elegiste la que menos te representaba. Se sumó a la instalación.');
+}
+function deleteShots(){ shots=[]; endMsg('Tus fotos han sido<br>eliminadas<br>para siempre.','Pero, ¿tus reacciones fueron genuinas?'); }
+function endMsg(k,p){ clearTimeout(endTimer); endStage='msg';
+  document.getElementById('delK').innerHTML=k; document.getElementById('delP').textContent=p;
+  show('deleted'); endTimer=setTimeout(nextPerson,6500); }
+function nextPerson(){ clearTimeout(endTimer); startSession(mode); }
+
+/* ===== datos: acumulado de toda la exposición ===== */
+function openData(){
+  const S=loadDB().sessions.filter(x=>x.mode!=='kj');
+  let smiles=0, annoy=0;
+  S.forEach(x=>{ const y=(x.answers||[]).filter(a=>a.yes).length; smiles+=y; annoy+=(x.answers||[]).length-y; });
+  const people=S.length, tot=(smiles+annoy)||1;
+  const pS=Math.round(smiles/tot*100), pA=100-pS;
+  document.getElementById('dTop').textContent = people
+    ? 'Han pasado '+people+(people===1?' persona':' personas')+'. Esto es lo que esta máquina les ha sacado a todas juntas.'
+    : 'Todavía no ha pasado nadie. Los datos se acumulan en este dispositivo.';
+  document.getElementById('dPeople').textContent=people;
+  document.getElementById('dSmiles').textContent=smiles;
+  document.getElementById('dAnnoy').textContent=annoy;
+  const cb=document.getElementById('dCmp');
+  cb.querySelector('.s').style.width=pS+'%'; cb.querySelector('.a').style.width=pA+'%';
+  document.getElementById('dSpct').textContent=pS+'%';
+  document.getElementById('dApct').textContent=pA+'%';
+  document.getElementById('dSlab').textContent='Sonrisas · '+smiles;
+  document.getElementById('dAlab').textContent=annoy+' · Molestias';
+  document.getElementById('dataNote').textContent = people
+    ? 'Aquí no hay rostros, solo la cuenta. Las fotos que se guardan van aparte, a la carpeta de la exposición.'
+    : '';
+  document.getElementById('data').scrollTop=0; show('data');
+}
+
+/* ===== registro de la última sesión, para los datos ===== */
+let lastSession=null;
+
+/* Descarga de todo lo recogido: tocar tres veces el contador de registro.
+   Sirve para enviar los PDF a mano al final de la exposición. */
+(function(){
+  let n=0,t0=0;
+  document.getElementById('tPeople').addEventListener('click',()=>{
+    const now=Date.now(); n=(now-t0<800)?n+1:1; t0=now;
+    if(n<3) return; n=0;
+    const S=loadDB().sessions;
+    const filas=[['fecha','modo','puntaje','respuestas'].join(';')];
+    S.forEach(x=>{ const bank=x.mode==='kj'?KJ_BANK:COACH_BANK;
+      filas.push([new Date(x.t).toLocaleString(), x.mode||'coach', x.score,
+        (x.answers||[]).map(a=>bank[a.i].q+' -> '+(a.yes?'SI':'NO')).join(' | ')
+      ].map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')); });
+    const blob=new Blob(['\ufeff'+filas.join('\n')],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='aguafiestas-datos.csv'; a.click();
+  });
+})();
+
+/* Descarga de datos: SIEMPRE en Excel. La usan tanto el botón visible
+   "Descargar datos" de la pestaña de Datos como el punto disimulado de la
+   esquina. (downloadExcel se define más abajo y se iza.) */
+document.getElementById('backup').onclick=downloadExcel;
+document.getElementById('dDownload').onclick=downloadExcel;
+
+/* Descarga en Excel: CSV con separador ; y BOM, que Excel abre directamente en
+   columnas. Una fila por persona con fecha, modo, puntaje, sonrisas, molestias
+   y las respuestas. */
+function downloadExcel(){
+  const S=loadDB().sessions;
+  const head=['Fecha','Modo','Puntaje (0-5)','Sonrisas (SI)','Molestias (NO)','Respuestas'];
+  const rows=[head];
+  S.forEach(x=>{
+    const bank=x.mode==='kj'?KJ_BANK:COACH_BANK;
+    const y=(x.answers||[]).filter(a=>a.yes).length, n=(x.answers||[]).length-y;
+    rows.push([
+      new Date(x.t).toLocaleString(),
+      x.mode||'coach',
+      x.score,
+      x.mode==='kj'?'':(x.sm!=null?x.sm:y),
+      x.mode==='kj'?'':(x.an!=null?x.an:n),
+      (x.answers||[]).map(a=>bank[a.i].q+' -> '+(a.yes?'SI':'NO')).join(' | ')
+    ]);
+  });
+  const csv='\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const d=new Date(), p=x=>String(x).padStart(2,'0');
+  const stamp=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes());
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='aguafiestas-datos_'+stamp+'.csv'; a.click();
+}
+
+/* ===== botones ===== */
+document.getElementById('btnStart').onclick=startCam;
+document.getElementById('btnRestart').onclick=()=>startSession(mode);
+document.getElementById('btnKj').onclick=()=>startSession(mode==='kj'?'coach':'kj');
+document.getElementById('btnData').onclick=openData;
+document.getElementById('btnReset2').onclick=()=>{ document.body.classList.remove('paper'); startSession(mode); };
+document.getElementById('btnClose').onclick=()=>{
+  if(phase==='done'){ show('photos'); return; }
+  hideScreens(); if(phase==='idle') show('intro'); };
+document.getElementById('btnFbSkip').onclick=()=>{ noCam=true; startSession(mode); };
+/* cierre: se le pregunta a la persona si guardar para la exposición o borrar */
+document.getElementById('phSave').onclick=showPick;
+document.getElementById('phDelete').onclick=deleteShots;
+app.addEventListener('click',e=>{
+  if(!noCam) return;
+  if(phase==='reading'){ beginAnswer(); return; }
+  if(phase!=='asking') return;
+  const r=app.getBoundingClientRect(); commit(((e.clientX-r.left)/r.width)<0.5?'si':'no'); });
+
+/* ===== cámara ===== */
+let landmarker=null, poser=null;
+function inFrame(){ try{ return self!==top; }catch(e){ return true; } }
+if(inFrame()) document.getElementById('introWarn').textContent='En una vista previa el navegador bloquea la cámara. Publica el archivo en https.';
+/* Carga en dos tiempos, para no repetir el bloqueo anterior:
+   1) modelos LIMPIOS de una sola persona (numFaces:1 / numPoses:1, SIN
+      minFaceDetectionConfidence ni minPoseDetectionConfidence). Con esto la
+      pieza arranca SIEMPRE, igual que la versión que ya te funcionaba.
+   2) solo si el dispositivo lo soporta, se sube EN SEGUNDO PLANO el modelo de
+      ROSTRO a varias caras (para contar por lado). La pose se queda en 1, que
+      es lo pesado. Si el paso 2 falla, se conserva el de 1 y el error queda
+      visible (no se traga en silencio). */
+const MULTIPERSONA = true;   // false = desactiva el conteo por lados
+/* En celular/iPad la detección pesa mucho más; se baja la carga para que no se
+   trabe. Un solo interruptor gobierna resolución, techo de caras, fps y el
+   margen antes de reiniciar por ausencia. */
+const MOBILE = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
+const MULTI_FACES  = MOBILE ? 3 : 5;   // techo de caras para grupos (menos en móvil)
+const FACE_CONF    = 0.3;    // umbral BAJO de detección: lee rostros más pequeños/lejanos (con respaldo si rompe)
+/* USAR_LOCAL: true carga la librería y los modelos desde el propio repositorio
+   (carpetas vision/ y models/) en vez de Google/jsdelivr; sirve cuando la
+   descarga desde Google se cuelga. Sube esas carpetas junto al index. */
+const USAR_LOCAL = false;
+const CDN   = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.12";
+const VBASE = USAR_LOCAL ? "vision" : CDN;   // bundle .mjs + carpeta wasm
+const FACE_TASK = USAR_LOCAL ? "models/face_landmarker.task"
+  : "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+const POSE_TASK = USAR_LOCAL ? "models/pose_landmarker_lite.task"
+  : "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
+let F=null, files=null, faceCount=0, multiState='single', lastLoadError='';
+
+/* crea el modelo de rostro intentando primero un umbral de detección BAJO
+   (para alcanzar caras lejanas/pequeñas); si esos parámetros rompen la creación
+   en el dispositivo, reintenta LIMPIO, para no volver a colgar la carga */
+async function makeFace(n){
+  const base={baseOptions:{modelAssetPath:FACE_TASK},runningMode:"VIDEO",numFaces:n,outputFaceBlendshapes:true};
+  try{ return await F.createFromOptions(files,Object.assign({},base,{minFaceDetectionConfidence:FACE_CONF,minFacePresenceConfidence:FACE_CONF,minTrackingConfidence:FACE_CONF})); }
+  catch(e){ return await F.createFromOptions(files,base); }
+}
+
+async function initModels(){
+  let P,R;
+  try{ ({FaceLandmarker:F,PoseLandmarker:P,FilesetResolver:R}=await import(VBASE+"/vision_bundle.mjs")); }
+  catch(e){ lastLoadError='No se pudo bajar la librería de detección ('+(e&&e.message||e)+').'; return; }
+  try{ files=await R.forVisionTasks(VBASE+"/wasm"); }
+  catch(e){ lastLoadError='No se pudo bajar el motor WASM ('+(e&&e.message||e)+').'; return; }
+  /* paso 1: una sola persona, con umbral bajo (respaldo limpio dentro de makeFace) */
+  try{ landmarker=await makeFace(1); }
+  catch(e){ lastLoadError='No se pudo crear el modelo de rostro ('+(e&&e.message||e)+').'; }
+  try{ poser=await P.createFromOptions(files,{baseOptions:{modelAssetPath:POSE_TASK},runningMode:"VIDEO",numPoses:1}); }
+  catch(e){ lastLoadError='No se pudo crear el modelo de pose ('+(e&&e.message||e)+').'; }
+  /* paso 2: subir SOLO el rostro a varias caras, en segundo plano */
+  if(MULTIPERSONA && landmarker) upgradeMulti();
+}
+async function upgradeMulti(){
+  if(!F||!files) return;
+  multiState='upgrading';
+  for(let n=MULTI_FACES; n>=2; n--){          // si 5 no carga, prueba 4, 3, 2, en vez de rendirse
+    try{
+      const multi=await makeFace(n);
+      const old=landmarker; landmarker=multi; multiState='multi';   // swap atómico
+      try{ if(old&&old!==multi) old.close(); }catch(_){}
+      return;
+    }catch(e){ lastLoadError='Multipersona con '+n+' caras no cargó ('+(e&&e.message||e)+').'; }
+  }
+  multiState='failed';
+  lastLoadError='El conteo por lados no se pudo activar aquí. La pieza sigue funcionando con una sola persona.';
+  console.warn('[aguafiestas] multipersona no disponible');
+  flagMulti();
+}
+function flagMulti(){
+  const w=document.getElementById('introWarn');
+  if(multiState==='failed' && w && !w.textContent) w.textContent=lastLoadError;
+  tPeople.title=lastLoadError||'';
+}
+initModels();
+function showFallback(k){
+  const t=document.getElementById('fbTitle'), m=document.getElementById('fbMsg');
+  if(k==='frame'){ t.textContent='La cámara no funciona en la vista previa'; m.textContent='El navegador la bloquea dentro de un marco. Abre la versión publicada en https.'; }
+  else if(k==='denied'){ t.textContent='Permiso denegado'; m.textContent='Habilita la cámara desde el ícono de la barra de direcciones y vuelve a empezar.'; }
+  else if(k==='nodev'){ t.textContent='No se encontró cámara'; m.textContent='Este equipo no tiene cámara disponible.'; }
+  else { t.textContent='Se necesita https'; m.textContent='En iPad, iPhone y Android la cámara solo funciona en páginas https.'; }
+  show('fallback');
+}
+async function startCam(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    showFallback(inFrame()?'frame':(isSecureContext?'secure':'insecure')); return; }
+  try{
+    const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:MOBILE?1280:1920},height:{ideal:MOBILE?720:1080}},audio:false});
+    cam.srcObject=st; cam.muted=true; cam.playsInline=true;
+    try{ await cam.play(); }catch(_){ setTimeout(()=>cam.play().catch(()=>{}),300); }
+    size(); requestAnimationFrame(loop);
+    hideScreens(); setOrder('good','UN MOMENTO','Cargando la detección');
+    const t0=Date.now();
+    (function w(){ if(landmarker||poser){ setOrder(null); startSession('coach'); return; }
+      if(Date.now()-t0>15000){ noCam=true; setOrder(null);
+        document.getElementById('fbTitle').textContent='No se pudo cargar la detección';
+        document.getElementById('fbMsg').textContent=lastLoadError||'Este dispositivo no descargó los modelos. Revisa la conexión.';
+        show('fallback'); return; }
+      setTimeout(w,300); })();
+  }catch(err){ const n=err&&err.name;
+    if(n==='NotFoundError'||n==='OverconstrainedError') showFallback('nodev');
+    else if(inFrame()) showFallback('frame'); else showFallback('denied'); }
+}
+function size(){ fx.width=cam.videoWidth||1280; fx.height=cam.videoHeight||720; }
+['loadedmetadata','loadeddata','canplay','playing','resize'].forEach(e=>cam.addEventListener(e,size));
+
+/* foto en blanco y negro del momento de responder. No sale del navegador:
+   se queda como dataURL en el arreglo shots[] y se borra al reiniciar */
+function snap(){
+  try{
+    const vw=cam.videoWidth, vh=cam.videoHeight; if(!vw||!vh) return null;
+    const AR=3/4;                                  // vertical: ancho/alto objetivo
+    let sw=vh*AR, sh=vh; if(sw>vw){ sw=vw; sh=vw/AR; }   // recorte centrado del video
+    const sx=(vw-sw)/2, sy=(vh-sh)/2;
+    const W=540, H=Math.round(W/AR);               // 540 x 720
+    const c=document.createElement('canvas'); c.width=W; c.height=H;
+    const g=c.getContext('2d');
+    g.save(); g.translate(W,0); g.scale(-1,1);     // espejo, como se vio
+    g.drawImage(cam, sx,sy,sw,sh, 0,0,W,H); g.restore();
+    const im=g.getImageData(0,0,W,H), d=im.data;
+    for(let i=0;i<d.length;i+=4){ const y=d[i]*.299+d[i+1]*.587+d[i+2]*.114, v=Math.min(255,y*1.06);
+      d[i]=d[i+1]=d[i+2]=v; }
+    g.putImageData(im,0,0);
+    return c.toDataURL('image/jpeg',0.72);
+  }catch(e){ return null; }
+}
+
+/* ===== dibujo ===== */
+const LINKS=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+function acc(){ return document.body.classList.contains('kj') ? '#ffffff' : '#000000'; }
+function drawFace(lm,W,H){
+  const c=acc(); ctx.save(); ctx.fillStyle=c;
+  for(let i=0;i<lm.length;i+=7) ctx.fillRect(lm[i].x*W-1.2, lm[i].y*H-1.2, 2.4, 2.4);
+  let a=1,b=1,d=0,e=0; for(const p of lm){ if(p.x<a)a=p.x; if(p.y<b)b=p.y; if(p.x>d)d=p.x; if(p.y>e)e=p.y; }
+  const x=a*W,y=b*H,w=(d-a)*W,h=(e-b)*H,k=Math.min(w,h)*.26;
+  ctx.strokeStyle=c; ctx.lineWidth=3;
+  [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([px,py,sx,sy])=>{
+    ctx.beginPath(); ctx.moveTo(px,py+sy*k); ctx.lineTo(px,py); ctx.lineTo(px+sx*k,py); ctx.stroke(); });
+  ctx.restore();
+}
+function drawPose(lm,W,H){
+  const c=acc(); ctx.save(); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.globalAlpha=.85;
+  LINKS.forEach(([i,j])=>{ const p=lm[i],q=lm[j]; if(!p||!q) return;
+    ctx.beginPath(); ctx.moveTo(p.x*W,p.y*H); ctx.lineTo(q.x*W,q.y*H); ctx.stroke(); });
+  ctx.fillStyle=c;
+  [11,12,13,14,15,16,23,24,25,26,27,28].forEach(i=>{ const p=lm[i]; if(!p) return;
+    ctx.fillRect(p.x*W-3.5,p.y*H-3.5,7,7); });
+  ctx.restore();
+}
+/* brazo por encima de la cabeza: cualquiera de las dos muñecas más alta que la nariz */
+function armUp(lm){
+  if(!lm) return false;
+  const n=lm[0]; if(!n) return false;
+  const up=w => w && (w.visibility===undefined || w.visibility>0.35) && w.y < n.y-0.02;
+  return up(lm[15]) || up(lm[16]);
+}
+function sig(lm){ const a=lm[33],b=lm[263],c=lm[1],d=lm[152]; if(!a||!b||!c||!d) return null;
+  return Math.hypot(a.x-b.x,a.y-b.y)/(Math.hypot(c.x-d.x,c.y-d.y)||1); }
+/* de frente: la nariz cae cerca del punto medio entre los ojos (si gira, se corre) */
+function frontal(lm){ const l=lm[33],r=lm[263],n=lm[1]; if(!l||!r||!n) return false;
+  const span=Math.abs(r.x-l.x); if(span<0.05) return false;               // muy pequeña o de perfil
+  return Math.abs((n.x-(l.x+r.x)/2)/span) < 0.22; }
+function faceSmile(bs){ if(!bs) return 0; let a=0,b=0;
+  for(const c of bs.categories){ if(c.categoryName==='mouthSmileLeft')a=c.score; else if(c.categoryName==='mouthSmileRight')b=c.score; }
+  return Math.max(a,b); }
+const SMILE_TH=0.32;   // umbral de sonrisa por cara en la competencia de grupo
+function abort(msg){
+  phase='idle'; slab.classList.remove('on'); split.classList.remove('on'); askq.classList.remove('on');
+  setOrder('bad',msg,'Reiniciando');
+  setTimeout(()=>{ if(phase==='idle'&&!document.querySelector('.screen.on')){ setOrder(null); startSession(mode); } },2800);
+}
+
+/* ===== bucle ===== */
+let lastT=0;
+function loop(t){
+  requestAnimationFrame(loop);
+  if(cam.readyState<2) return;
+  const dt=t-lastT; if(dt<(MOBILE?45:32)) return; lastT=t;   // ~22 fps en móvil, ~30 en escritorio
+  const W=fx.width,H=fx.height; ctx.clearRect(0,0,W,H);
+  let fr=null,pr=null;
+  try{ if(landmarker) fr=landmarker.detectForVideo(cam,t); }catch(e){}
+  try{ if(poser) pr=poser.detectForVideo(cam,t); }catch(e){}
+  let cx=null, present=false, siSmiles=0, noSmiles=0, siFront=0, noFront=0, gSmileMax=0;
+  const faces=(fr&&fr.faceLandmarks)?fr.faceLandmarks:[];
+  faceCount=faces.length;
+  if(faceCount){
+    /* cara principal = la más grande (la más cercana); calibra la expresión.
+       Además se identifican TODAS las que miran de frente y se cuentan las
+       sonrisas de cada lado, para que compitan. */
+    let primary=0, pArea=-1;
+    for(let k=0;k<faces.length;k++){
+      const lm=faces[k]; drawFace(lm,W,H);
+      let a=1,b=1,d=0,e=0,sx=0;
+      for(const p of lm){ sx+=p.x; if(p.x<a)a=p.x; if(p.y<b)b=p.y; if(p.x>d)d=p.x; if(p.y>e)e=p.y; }
+      if((d-a)*(e-b)>pArea){ pArea=(d-a)*(e-b); primary=k; }
+      if(frontal(lm)){
+        const fdx=1-(sx/lm.length);                 // imagen espejada: dx = 1 - centro
+        const sm=faceSmile(fr.faceBlendshapes&&fr.faceBlendshapes[k]);
+        if(sm>gSmileMax) gSmileMax=sm;
+        if(fdx<0.5){ siFront++; if(sm>=SMILE_TH) siSmiles++; }
+        else       { noFront++; if(sm>=SMILE_TH) noSmiles++; }
+      }
+    }
+    const plm=faces[primary];
+    let psx=0; for(const p of plm) psx+=p.x; cx=psx/plm.length;
+    const bs=fr.faceBlendshapes&&fr.faceBlendshapes[primary];
+    if(bs) readExpr(bs);
+    present=true; lastFaceT=t;
+    /* la vigilancia de "otra persona" solo tiene sentido con una sola cara;
+       con varias es lo esperado, así que se apaga para no abortar */
+    if(faceCount===1){
+      const s=sig(plm);
+      if(s){ if(faceSig===null) faceSig=s;
+        else if(Math.abs(s-faceSig)/faceSig>0.35) mism++; else { mism=Math.max(0,mism-1); faceSig=faceSig*.95+s*.05; } }
+    }else{ mism=0; faceSig=null; }
+  }
+  poseLm=null;
+  if(pr&&pr.landmarks&&pr.landmarks.length){ const lm=pr.landmarks[0]; poseLm=lm; drawPose(lm,W,H); present=true;
+    if(cx===null&&lm[0]) cx=lm[0].x; }
+
+  const SM=smileN(), FR=frownN();
+  const groupN=siFront+noFront;
+  const dispSM = groupN>=2 ? gSmileMax : SM;   // en grupo el telemétrico muestra la sonrisa del grupo
+  tSmile.textContent=Math.round(dispSM*100)+'%'; tSmileBar.style.width=Math.round(dispSM*100)+'%';
+
+  if(phase==='reading'){
+    if(armUp(poseLm)){
+      raiseT=Math.min(RAISE_MS,raiseT+dt);
+      aqHint.textContent='Sostén el brazo arriba';
+    }else{
+      raiseT=Math.max(0,raiseT-dt*1.4);
+      if(raiseT===0) aqHint.textContent='Cualquier brazo, por encima de tu cabeza';
+    }
+    aqBar.style.width=Math.round(raiseT/RAISE_MS*100)+'%';
+    if(raiseT>=RAISE_MS) beginAnswer();
+    return;
+  }
+
+  if(phase==='asking'||phase==='between'){
+    if(!noCam && !present && lastFaceT && t-lastFaceT>(MOBILE?4500:2800)){ faceSig=null; mism=0; resetExpr(); abort('TE FUISTE'); return; }
+    if(mism>28){ faceSig=null; mism=0; resetExpr(); abort('OTRA PERSONA'); return; }
+  }
+  if(phase!=='asking'){ tSide.textContent='—'; return; }
+
+  const multi = groupN>=2;   // grupo = 2+ personas mirando de frente
+  let side=null;
+  if(multi){
+    /* grupos: compiten por SONRISAS. Se leen TODAS las caras de frente (no la
+       más cercana). Se suaviza el conteo de cada lado para que no parpadee, y
+       gana el lado con claramente más gente sonriendo. Empate: sigue el que iba. */
+    smSi += (siSmiles - smSi)*0.25;
+    smNo += (noSmiles - smNo)*0.25;
+    if(smSi > smNo + 0.4) side='si';
+    else if(smNo > smSi + 0.4) side='no';
+    else if(sideNow && ((sideNow==='si'&&smSi>0.3)||(sideNow==='no'&&smNo>0.3))) side=sideNow;
+  }else{
+    smSi=0; smNo=0;
+    const dx = cx===null?null:1-cx;   // una sola persona: la más cercana, zona muerta de siempre
+    if(dx!==null){ if(dx<0.45) side='si'; else if(dx>0.55) side='no'; }
+  }
+  sideNow=side; tSide.textContent = side==='si'?'SÍ':(side==='no'?'NO':'—');
+  hSi.className='half'; hNo.className='half';
+
+  if(!side){ holdT=0; fillSi.style.height='0%'; fillNo.style.height='0%';
+    setOrder('good','ELIGE UN LADO','Izquierda sí · derecha no'); return; }
+
+  const el = side==='si'?hSi:hNo, fillEl = side==='si'?fillSi:fillNo;
+
+  /* Una persona: el SÍ exige sonreír; el NO exige cara molesta / ceño fruncido.
+     Grupo: gana y llena el lado con más sonrisas. */
+  let ok;
+  if(multi){ ok = (side!==null); }
+  else if(mode!=='coach' || !EX.has){ ok=true; }
+  else if(side==='si'){ ok = SM >= (lockSi?0.24:0.42); lockSi=ok; lockNo=false; }
+  else { ok = FR >= (lockNo?0.20:0.34) && SM < 0.28; lockNo=ok; lockSi=false; }
+
+  el.classList.add(ok?'active':'blocked');
+  if(side==='si') fillNo.style.height='0%'; else fillSi.style.height='0%';
+  if(t-nagT>1300){ nagI++; nagT=t; }
+
+  if(ok){
+    holdT=Math.min(HOLD,holdT+dt);
+    fillEl.style.height=Math.round(holdT/HOLD*100)+'%';
+    const Q=BANK()[queue[qi]];
+    const set = side==='si' ? (Q.fs||[]) : (Q.fn||[]);
+    let m = set.length ? set[nagI%set.length] : null;
+    if(mode==='coach' && side==='no' && nagI%3===2)
+      m=[NO_MSG[nagI%NO_MSG.length], NO_SUB[nagI%NO_SUB.length]];
+    if(m) setOrder((mode==='coach'&&side==='no')?'bad':'good', m[0], m[1]);
+    else setOrder('good','SOSTÉN AHÍ','Un momento más');
+    if(holdT>=HOLD) commit(side);
+  }else{
+    holdT=Math.max(0,holdT-dt*1.5);
+    fillEl.style.height=Math.round(holdT/HOLD*100)+'%';
+    if(side==='si') setOrder('bad', NAG[nagI%NAG.length], NAG_SUB[nagI%NAG_SUB.length]);
+    else if(SM>=0.28) setOrder('bad','ESA SONRISA ES UN SÍ','Para decir que no, deja de sonreír');
+    else setOrder('bad', NO_ANGRY[nagI%NO_ANGRY.length], NO_ANGRY_SUB[nagI%NO_ANGRY_SUB.length]);
+  }
+}
+show('intro');
+</script>
